@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Client_ViewModels="clr-namespace:Client.ViewModels" 
+                    xmlns:Client_Models="clr-namespace:Client.Models">
+
+    <!--<Client_ViewModels:MainViewModel.Bots>
+        <Client_Models:Bot Name="BotNaam1" Version="V 1.1.1.0"/>
+        <Client_Models:Bot Name="BotNaam2" Version="V 1.1.2.0"/>
+        <Client_Models:Bot Name="BotNaam3" Version="V 1.1.3.0"/>
+        <Client_Models:Bot Name="BotNaam4" Version="V 1.1.4.0"/>
+    </Client_ViewModels:MainViewModel.Bots>-->
+
+</ResourceDictionary>
