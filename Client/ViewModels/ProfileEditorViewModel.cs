@@ -5,14 +5,17 @@ using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Client.ViewModels {
     public class ProfileEditorViewModel : ClientViewModelBase {
@@ -30,6 +33,7 @@ namespace Client.ViewModels {
         public RelayCommand<Profile> DeleteProfileCommand { get; private set; }
         public RelayCommand AddNewBotCommand { get; private set; }
         public RelayCommand DeleteAllProfilesCommand { get; private set; }
+        public RelayCommand<Window> DiscardAllProfileChangesCommand { get; private set; }
         public RelayCommand ImportProfileCommand { get; private set; }
         public RelayCommand<Profile> ExportProfileCommand { get; private set; }
         public RelayCommand<Profile> SetActiveProfileCommand { get; private set; }
@@ -49,6 +53,7 @@ namespace Client.ViewModels {
             DeleteProfileCommand = new RelayCommand<Profile>(DeleteProfile, CanDeleteProfile);
             SetActiveProfileCommand = new RelayCommand<Profile>(SetActiveProfile);
             DeleteAllProfilesCommand = new RelayCommand(DeleteAllProfiles);
+            DiscardAllProfileChangesCommand = new RelayCommand<Window>(DiscardAndCloseEditor);
             //ImportProfileCommand = new RelayCommand(ImportProfile);
             //ExportProfileCommand = new RelayCommand<Profile>(ExportProfile);
 
@@ -80,6 +85,17 @@ namespace Client.ViewModels {
                 SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
                 FillProfilesList();
                 FillTrackedFilesList(SelectedProfile);
+            }
+        }
+
+        private void DiscardAndCloseEditor(Window window) {
+            if (window == null) return;
+            //Are you sure you want to discard all changes?
+            var msgBox = new Views.DeleteAllMsgBox();
+            msgBox.ShowDialog();
+            if (msgBox.Response) {
+                Debug.WriteLine("Yes im sure i wanna discard and close.");
+                window.Close();
             }
         }
 

@@ -1,7 +1,9 @@
 ﻿using Client.Framework;
+using Client.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 
 namespace Client.Models {
     [Serializable]

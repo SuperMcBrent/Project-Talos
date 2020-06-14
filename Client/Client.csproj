@@ -89,12 +89,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ColorExtensionMethod.cs" />
+    <Compile Include="Utilities\BoolToValueConverter.cs" />
     <Compile Include="Utilities\DirectoryTools.cs" />
     <Compile Include="Utilities\LogFile.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ProfileEditorViewModel.cs" />
     <Compile Include="Views\DeleteAllMsgBox.xaml.cs">
-      <DependentUpon>DeleteAllMsgBox.xaml</DependentUpon>
+      <DependentUpon>DeleteAllProfilesDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DiscardAllProfileChangesDialog.xaml.cs">
+      <DependentUpon>DiscardAllProfileChangesDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -167,11 +172,18 @@
     <DesignData Include="SampleData\MainViewModelSampleData.xaml">
       <SubType>Designer</SubType>
     </DesignData>
+    <DesignData Include="SampleData\ProfileEditorViewSampleData.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
     <Page Include="Styles\Others.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\DeleteAllMsgBox.xaml">
+    <Page Include="Views\DeleteAllProfilesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DiscardAllProfileChangesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

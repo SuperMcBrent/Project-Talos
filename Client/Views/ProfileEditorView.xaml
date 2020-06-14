@@ -1,97 +1,65 @@
 ﻿<Window x:Class="Client.Views.ProfileEditorView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Client.Views"
-      xmlns:m="clr-namespace:Client.Models"
-      xmlns:w="clr-namespace:System;assembly=mscorlib" 
-      mc:Ignorable="d" 
-      Height="470" Width="800"
-      Title="Profile Editor"
-      Icon="../Icons/Main.png"
-      Background="DarkSlateGray"
-      Name="ProfileEditorWindow"
-      DataContext="{Binding ProfileEditor, Source={StaticResource Locator}}">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Client.Views"
+        xmlns:u="clr-namespace:Client.Utilities"
+        xmlns:m="clr-namespace:Client.Models"
+        xmlns:w="clr-namespace:System;assembly=mscorlib" 
+        mc:Ignorable="d" 
+        Height="470" Width="800"
+        Title="Profile Editor"
+        Icon="../Icons/Main.png"
+        Background="DarkSlateGray"
+        Name="ProfileEditorWindow"
+        DataContext="{Binding ProfileEditor, Source={StaticResource Locator}}"
+        d:DataContext="{d:DesignData /SampleData/ProfileEditorViewSampleData.xaml}">
+    <Window.Resources>
+        <u:BoolToStringConverter x:Key="BoolToString" FalseValue="No" TrueValue="Yes" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240" MaxWidth="400" />
+            <ColumnDefinition Width="250" MaxWidth="400" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <GroupBox
-            Header="Profiles"
             Padding="3" Margin="5"
             BorderBrush="black" BorderThickness="1">
+            <GroupBox.Header>
+                <TextBlock Text="Profiles" FontWeight="Bold"/>
+            </GroupBox.Header>
             <ScrollViewer
-            Background="DarkSlateGray"
             VerticalScrollBarVisibility="Hidden">
                 <ItemsControl ItemsSource="{Binding ProfilesList}">
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type m:Profile}">
                             <Border Style="{StaticResource ListItemBorderStyle}"
                                     Background="DimGray" MouseLeftButtonDown="SelectProfile_Click">
-                                <StackPanel Orientation="Vertical">
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding ProfileName}" 
+                                <DockPanel >
+                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
+                                        <TextBlock Text="{Binding ProfileName}" IsHitTestVisible="False"
                                                HorizontalAlignment="Left" FontSize="20"/>
-                                        <TextBlock Text="{Binding UserName}"
+                                        <TextBlock Text="{Binding UserName}" IsHitTestVisible="False"
                                                Grid.Row="1"  HorizontalAlignment="Left" FontSize="16"/>
-                                    </Grid>
-                                    <!--<Expander ExpandDirection="Down" IsExpanded="{Binding IsInFocusProfileEditor}"
-                                          Margin="5" Header="More Options" Expanded="Expander_Expanded"
-                                          LostFocus="Expander_LostFocus">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <GroupBox
-                                            Header="Tracked Files"
-                                            Padding="3" Margin="5"
-                                            BorderBrush="black" BorderThickness="1">
-                                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                                <ItemsControl ItemsSource="{Binding TrackedFiles}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Text="{Binding}" HorizontalAlignment="Left" Margin="3" Padding="5" Background="AliceBlue">
-                                                                <TextBlock.ContextMenu>
-                                                                    <ContextMenu>
-                                                                        <MenuItem Header="Untrack File" Click="UntrackFile_Click">
-                                                                            <MenuItem.Icon>
-                                                                                <Image Source="../Icons/Delete.png" Width="20"/>
-                                                                            </MenuItem.Icon>
-                                                                        </MenuItem>
-                                                                    </ContextMenu>
-                                                                </TextBlock.ContextMenu>
-                                                            </TextBlock>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </ScrollViewer>
-                                        </GroupBox>
-                                        <GroupBox
-                                            Header="Options"
-                                            Padding="3" Margin="5" Grid.Column="1"
-                                            BorderBrush="black" BorderThickness="1">
-                                            <StackPanel Orientation="Vertical">
-                                                <CheckBox Margin="4" Content="Active Profile" 
-                                                  IsChecked="{Binding IsActive}" IsHitTestVisible="False"/>
-                                                <CheckBox Margin="4" Content="Default Profile" 
-                                                  IsChecked="{Binding IsDefault}" IsHitTestVisible="False"/>
-                                            </StackPanel>
-                                        </GroupBox>
-                                    </Grid>
-                                </Expander>-->
-                                </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top">
+                                        <TextBlock IsEnabled="{Binding IsActive}" IsHitTestVisible="False"
+                                                   HorizontalAlignment="Right" FontSize="20">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="True">
+                                                            <Setter Property="Text" Value="&#x2714;"/>
+                                                            <Setter Property="Foreground" Value="DarkGreen"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DockPanel>
                             </Border>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type m:CustomListAddButton}">
@@ -109,9 +77,11 @@
         </GroupBox>
         <DockPanel Grid.Column="1">
             <GroupBox
-                    Header="Commands"
                     Padding="3" Margin="5 0 5 5" DockPanel.Dock="Bottom"
                     BorderBrush="black" BorderThickness="1">
+                    <GroupBox.Header>
+                        <TextBlock Text="Commands" FontWeight="Bold"/>
+                    </GroupBox.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -125,7 +95,7 @@
                         </Button.ToolTip>
                         <TextBlock Text="Delete All Profiles"/>
                     </Button>
-                    <Button Grid.Column="2" Margin="0 0 4 0" Padding="4">
+                    <Button Grid.Column="2" Margin="0 0 4 0" Padding="4" Click="DiscardAllProfileChanges_Click">
                         <Button.ToolTip>
                             <TextBlock Text="Discard all changes made in this session."/>
                         </Button.ToolTip>
@@ -140,9 +110,11 @@
                 </Grid>
             </GroupBox>
             <GroupBox
-                Header="Selected Profile"
                 Padding="3" Margin="5"
                 BorderBrush="black" BorderThickness="1">
+                <GroupBox.Header>
+                    <TextBlock Text="SelectedProfile" FontWeight="Bold"/>
+                </GroupBox.Header>
             <Grid DataContext="{Binding SelectedProfile}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -160,8 +132,27 @@
                             </StackPanel>
                             <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Margin="4"
                                         HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <TextBlock IsEnabled="{Binding IsActive}" IsHitTestVisible="False"
+                                                   HorizontalAlignment="Right" FontSize="20">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="True">
+                                                    <Setter Property="Text" Value="&#x2714;"/>
+                                                    <Setter Property="Foreground" Value="Green"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <!--<TextBlock Text="{Binding IsActive, Converter={StaticResource BoolToString}, StringFormat=Active: {0}}" HorizontalAlignment="Right" FontSize="10"/>-->
                                 <TextBlock Text="{Binding Id, StringFormat=Id: {0}}" HorizontalAlignment="Right" FontSize="10"/>
-                                <TextBlock Text="{Binding CreatedTime, StringFormat=Created: {0}}" HorizontalAlignment="Right" FontSize="10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding IsDefault, Converter={StaticResource BoolToString}, StringFormat=Default: {0}}" 
+                                               HorizontalAlignment="Right" FontSize="10" Margin="0 0 15 0" VerticalAlignment="Top"/>
+                                    <TextBlock Text="{Binding CreatedTime, StringFormat=Created: {0}}" 
+                                               HorizontalAlignment="Right" FontSize="10"/>
+                                </StackPanel>
                             </StackPanel>
                         </DockPanel>
                     </Border>
@@ -171,7 +162,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Vertical" Margin="4" Grid.Column="1">
+                        <StackPanel Orientation="Vertical" Margin="4 14 4 4" Grid.Column="1">
                             <CheckBox IsChecked="{Binding IsDefault}" IsHitTestVisible="false">
                                 <TextBlock Text="Is Default"/>
                             </CheckBox>

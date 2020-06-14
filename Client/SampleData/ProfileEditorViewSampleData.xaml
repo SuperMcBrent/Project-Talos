@@ -1,0 +1,22 @@
+﻿<Client_ViewModels:ProfileEditorViewModel  
+    xmlns:Client_ViewModels="clr-namespace:Client.ViewModels"
+    xmlns:Client_Models="clr-namespace:Client.Models"
+    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    IsInDesignMode="True">
+    <Client_ViewModels:ProfileEditorViewModel.SelectedProfile>
+        <Client_Models:Profile ProfileName="TestProfileName" 
+                               UserName="TestUserName">
+            <Client_Models:Profile.Id>
+                <System:Guid/>
+            </Client_Models:Profile.Id>
+        </Client_Models:Profile>
+    </Client_ViewModels:ProfileEditorViewModel.SelectedProfile>
+    <Client_ViewModels:ProfileEditorViewModel.Profiles>
+        <Client_Models:Profile ProfileName="TestProfileName" 
+                               UserName="TestUserName">
+            <Client_Models:Profile.Id>
+                <System:Guid/>
+            </Client_Models:Profile.Id>
+        </Client_Models:Profile>
+    </Client_ViewModels:ProfileEditorViewModel.Profiles>
+</Client_ViewModels:ProfileEditorViewModel>

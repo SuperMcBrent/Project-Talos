@@ -1,8 +1,8 @@
-﻿<Window x:Class="Client.Views.DeleteAllMsgBox"
+﻿<Window x:Class="Client.Views.DiscardAllProfileChangesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding Source={StaticResource LocStrings}, Path=DeleteAllDialogTitle}" Height="150" Width="300"
-        Background="Teal">
+        Title="Discarding all changes." Height="150" Width="300"
+        Background="DarkSlateGray">
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 5 5">
             <Button MinWidth="75" Content="{Binding Source={StaticResource LocStrings}, Path=No}" Click="OnNo_Clicked" />
@@ -15,5 +15,6 @@
                    Margin="5 0 0 0"/>
         </StackPanel>
     </DockPanel>
-</Window>
+    </Window>
+
 

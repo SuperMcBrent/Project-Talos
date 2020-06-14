@@ -81,5 +81,10 @@ namespace Client.Views {
             var textBlock = e.Source as Button;
             if (textBlock != null) ViewModel.SetActiveProfileCommand.Execute(textBlock.DataContext as Profile);
         }
+
+        private void DiscardAllProfileChanges_Click(object sender, RoutedEventArgs e) {
+            Debug.WriteLine($"Discarding all changes.");
+            ViewModel.DiscardAllProfileChangesCommand.Execute(this);
+        }
     }
 }
