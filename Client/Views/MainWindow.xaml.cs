@@ -1,4 +1,5 @@
-﻿using Client.ViewModels;
+﻿using Client.Models;
+using Client.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,7 +20,22 @@ namespace Client.Views {
 
         private void OpenChangeProfileWindow_Click(object sender, RoutedEventArgs e) {
             var menuItem = e.Source as MenuItem;
-            if (menuItem != null) ViewModel.OpenChangeProfileWindow.Execute(menuItem.DataContext);
+            if (menuItem != null) ViewModel.OpenChangeProfileWindowCommand.Execute(menuItem.DataContext);
+        }
+
+        private void CollapseBotList_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.CollapseBotListCommand.Execute(null);
+        }
+
+        private void CollapseGameList_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.CollapseGameListCommand.Execute(null);
+        }
+
+        private void SelectBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.SelectBotCommand.Execute(menuItem.DataContext as Bot);
         }
     }
 }

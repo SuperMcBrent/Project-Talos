@@ -8,15 +8,21 @@
         xmlns:m="clr-namespace:Client.Models"
         xmlns:w="clr-namespace:System;assembly=mscorlib" 
         mc:Ignorable="d" 
-        Height="470" Width="800"
+        Height="420" Width="800"
         Title="Profile Editor"
         Icon="../Icons/Main.png"
-        Background="DarkSlateGray"
         Name="ProfileEditorWindow"
         DataContext="{Binding ProfileEditor, Source={StaticResource Locator}}"
-        d:DataContext="{d:DesignData /SampleData/ProfileEditorViewSampleData.xaml}">
+        d:DataContext="{d:DesignData /SampleData/ProfileEditorViewSampleData.xaml}" Closing="ProfileEditorWindow_Closing">
+    <Window.Background>
+        <DynamicResource ResourceKey="AccentColor1" />
+    </Window.Background>
     <Window.Resources>
         <u:BoolToStringConverter x:Key="BoolToString" FalseValue="No" TrueValue="Yes" />
+        <SolidColorBrush x:Key="NiceGray" Color="#555555" />
+        <SolidColorBrush x:Key="AccentColor1" Color="DarkSlateGray" />
+        <SolidColorBrush x:Key="AccentColor2" Color="DimGray" />
+        <SolidColorBrush x:Key="AccentColor3" Color="Teal" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -35,7 +41,7 @@
                     <ItemsControl.Resources>
                         <DataTemplate DataType="{x:Type m:Profile}">
                             <Border Style="{StaticResource ListItemBorderStyle}"
-                                    Background="DimGray" MouseLeftButtonDown="SelectProfile_Click">
+                                    Background="{StaticResource AccentColor2}" MouseLeftButtonDown="SelectProfile_Click">
                                 <DockPanel >
                                     <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
                                         <TextBlock Text="{Binding ProfileName}" IsHitTestVisible="False"
@@ -64,9 +70,9 @@
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type m:CustomListAddButton}">
                             <Border Style="{StaticResource ListItemBorderStyle}"
-                                    Background="DimGray" MouseLeftButtonDown="NewProfile_Click">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
-                                    <Image Source="../Icons/New.png" Height="48"
+                                    Background="{StaticResource AccentColor2}" MouseLeftButtonDown="NewProfile_Click">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="3">
+                                    <Image Source="../Icons/New.png" Height="42"
                                        IsHitTestVisible="False"/>
                                 </StackPanel>
                             </Border>
@@ -95,15 +101,17 @@
                         </Button.ToolTip>
                         <TextBlock Text="Delete All Profiles"/>
                     </Button>
-                    <Button Grid.Column="2" Margin="0 0 4 0" Padding="4" Click="DiscardAllProfileChanges_Click">
+                    <Button Grid.Column="3" Margin="4 0 0 0" Padding="4" Click="Close_Click"
+                            Width="{Binding Path=ActualWidth, ElementName=OtherButton}">
                         <Button.ToolTip>
                             <TextBlock Text="Discard all changes made in this session."/>
                         </Button.ToolTip>
-                        <TextBlock Text="Discard Changes"/>
+                        <TextBlock Text="Close" />
                     </Button>
-                    <Button Grid.Column="3" Margin="4 0 0 0" Padding="4">
+                    <Button Grid.Column="2" Margin="0 0 4 0" Padding="4" Click="ConfirmChangesEndExit_Click"
+                            Name="OtherButton">
                         <Button.ToolTip>
-                            <TextBlock Text="Save all changes made in this session."/>
+                            <TextBlock Text="Save all changes made in this session." />
                         </Button.ToolTip>
                         <TextBlock Text="Apply Changes"/>
                     </Button>
@@ -124,7 +132,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                     <Border Style="{StaticResource ListItemBorderStyle}"
-                        Background="DimGray">
+                        Background="{StaticResource AccentColor2}">
                         <DockPanel >
                             <StackPanel Orientation="Vertical" Margin="4" DockPanel.Dock="Left">
                                 <TextBlock Text="{Binding ProfileName}" FontSize="20"/>
@@ -139,7 +147,7 @@
                                             <Style.Triggers>
                                                 <Trigger Property="IsEnabled" Value="True">
                                                     <Setter Property="Text" Value="&#x2714;"/>
-                                                    <Setter Property="Foreground" Value="Green"/>
+                                                    <Setter Property="Foreground" Value="DarkGreen"/>
                                                 </Trigger>
                                             </Style.Triggers>
                                         </Style>
@@ -169,6 +177,7 @@
                             <CheckBox IsChecked="{Binding IsActive}" IsHitTestVisible="false">
                                 <TextBlock Text="Is Active"/>
                             </CheckBox>
+                            <TextBlock Text="{Binding TrackedTalonFileNames.Count}" />
                         </StackPanel>
                         <StackPanel Orientation="vertical" Margin="4" Grid.Column="2"
                             VerticalAlignment="Bottom" Width="120">
@@ -213,15 +222,15 @@
                         </StackPanel>
                         <GroupBox
                             Header="Tracked Files"
-                            MinWidth="150"
+                            Width="150"
                             Padding="3" Margin="5"
                             BorderBrush="black" BorderThickness="1">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding DataContext.TrackedFilesList , ElementName=ProfileEditorWindow}">
+                            <ScrollViewer VerticalScrollBarVisibility="hidden" Name="BotListContainer">
+                                <ItemsControl ItemsSource="{Binding DataContext.TrackedBotsList , ElementName=ProfileEditorWindow}">
                                     <ItemsControl.Resources>
-                                        <DataTemplate DataType="{x:Type w:String}">
+                                        <DataTemplate DataType="{x:Type m:Bot}">
                                             <Border Style="{StaticResource ListItemBorderStyle}"
-                                                Background="DimGray" Margin="3">
+                                                Background="{StaticResource AccentColor2}" Margin="3" Padding="1">
                                                 <Border.ContextMenu>
                                                     <ContextMenu>
                                                         <MenuItem Click="UntrackFile_Click">
@@ -234,13 +243,18 @@
                                                         </MenuItem>
                                                     </ContextMenu>
                                                 </Border.ContextMenu>
-                                                <TextBlock Text="{Binding}" HorizontalAlignment="Left" Margin="2"
+                                                <StackPanel Orientation="Vertical" Width="{Binding Path=ActualWidth, ElementName=BotListContainer}" Margin="2">
+                                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Left"
                                                         IsHitTestVisible="False"/>
+                                                    <TextBlock Text="{Binding BotFilePath}" HorizontalAlignment="Left"
+                                                               ToolTip="{Binding BotFilePath}"
+                                                        IsHitTestVisible="False" FontSize="8" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
                                             </Border>
                                         </DataTemplate>
                                         <DataTemplate DataType="{x:Type m:CustomListAddButton}">
                                             <Border Style="{StaticResource ListItemBorderStyle}" Margin="3" Padding="1"
-                                                Background="DimGray" MouseLeftButtonDown="AddTrackedFile_Click">
+                                                Background="{StaticResource AccentColor2}" MouseLeftButtonDown="AddTrackedFile_Click">
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
                                                     <Image Source="../Icons/New.png" Height="24"
                                                         IsHitTestVisible="False"/>

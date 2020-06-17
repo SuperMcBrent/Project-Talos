@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Windows.Controls.Primitives;
 
 namespace Client.Business {
     /// <summary>
@@ -50,7 +51,7 @@ namespace Client.Business {
         public void SaveAll() {
             foreach (var item in _botStore) {
                 Serialize(item);
-            }            
+            }
         }
 
         /// <summary>
@@ -88,15 +89,19 @@ namespace Client.Business {
         /// </summary>
         /// <returns>A List with specific Bots</returns>
         public IList<Bot> FindSelect(IList<string> fileNameList) {
-            foreach (var item in _botsFolder.GetFiles("*.talos")) {
+            Debug.WriteLine($"Received list of length: {fileNameList.Count} (amt of paths in profile list)");
+            Debug.WriteLine($"TalonBotFiles in folder: {_botsFolder.GetFiles("*.talos").Length}");
 
-                foreach (var filename in fileNameList) {
-                    Debug.WriteLine($"{filename} and {item.Name}");
-                }
+            var trackedBotFiles = _botsFolder.GetFiles("*.talos")
+                .Where(f => fileNameList.Contains(Path.GetFileNameWithoutExtension(f.FullName) + ".talos")).ToList();
 
-                if (!fileNameList.Contains(item.Name)) break;
-                Debug.WriteLine("WE ARE HERE");
-                Deserialize(item);
+            Debug.WriteLine($"Found matching files: {trackedBotFiles.Count}");
+
+
+            _botStore = new List<Bot>();
+            foreach (var botFile in trackedBotFiles) {
+                Debug.WriteLine($"Deserializing {botFile.FullName}");
+                Deserialize(botFile);
             }
 
             if (_botStore == null) {
@@ -112,7 +117,7 @@ namespace Client.Business {
         private void Serialize(Bot bot) {
             if (bot == null) return;
 
-            using (var stream = File.Open(Path.Combine(_botsFolder.FullName,Path.GetFileNameWithoutExtension(bot.FilePath) + ".talos"), FileMode.OpenOrCreate)) {
+            using (var stream = File.Open(Path.Combine(_botsFolder.FullName, Path.GetFileNameWithoutExtension(bot.BotFilePath) + ".talos"), FileMode.OpenOrCreate)) {
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, bot);
             }

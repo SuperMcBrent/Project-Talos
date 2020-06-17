@@ -2,6 +2,7 @@
 using Client.Framework;
 using Client.Models;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,12 +21,17 @@ using System.Windows.Media;
 namespace Client.ViewModels {
     public class ProfileEditorViewModel : ClientViewModelBase {
 
+        #region Fields
+        private readonly IBotRepository _botRepository;
         private IProfileRepository _profileRepository;
         private ObservableCollection<Profile> _profiles;
+        private ObservableCollection<Bot> _bots;
         private Profile _SelectedProfile;
 
         private CompositeCollection _profilesList;
-        private CompositeCollection _trackedFilesList;
+        private CompositeCollection _trackedBotsList;
+
+        private bool _activeProfileChanged = false;
 
         public RelayCommand<string> UntrackFileCommand { get; private set; }
         public RelayCommand<Profile> SelectProfileCommand { get; private set; }
@@ -33,13 +39,16 @@ namespace Client.ViewModels {
         public RelayCommand<Profile> DeleteProfileCommand { get; private set; }
         public RelayCommand AddNewBotCommand { get; private set; }
         public RelayCommand DeleteAllProfilesCommand { get; private set; }
-        public RelayCommand<Window> DiscardAllProfileChangesCommand { get; private set; }
         public RelayCommand ImportProfileCommand { get; private set; }
         public RelayCommand<Profile> ExportProfileCommand { get; private set; }
         public RelayCommand<Profile> SetActiveProfileCommand { get; private set; }
+        public RelayCommand ConfirmChangesEndExitCommand { get; private set; }
+        #endregion
 
-        public ProfileEditorViewModel(IProfileRepository profileRepository) {
-            ProfileRepository = profileRepository;
+        #region Constructor
+        public ProfileEditorViewModel(IProfileRepository profileRepository, IBotRepository botRepository) {
+            _profileRepository = profileRepository;
+            _botRepository = botRepository;
 
             Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
             SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
@@ -52,21 +61,85 @@ namespace Client.ViewModels {
             AddNewProfileCommand = new RelayCommand(AddNewProfile, CanAddNewProfile);
             DeleteProfileCommand = new RelayCommand<Profile>(DeleteProfile, CanDeleteProfile);
             SetActiveProfileCommand = new RelayCommand<Profile>(SetActiveProfile);
+            ConfirmChangesEndExitCommand = new RelayCommand(ConfirmAndCloseEditor);
             DeleteAllProfilesCommand = new RelayCommand(DeleteAllProfiles);
-            DiscardAllProfileChangesCommand = new RelayCommand<Window>(DiscardAndCloseEditor);
             //ImportProfileCommand = new RelayCommand(ImportProfile);
             //ExportProfileCommand = new RelayCommand<Profile>(ExportProfile);
-
             AddNewBotCommand = new RelayCommand(AddNewBot);
         }
+        #endregion
 
+        #region Poperties
+        public CompositeCollection ProfilesList {
+            get { return _profilesList; }
+            set {
+                if (_profilesList != value) {
+                    _profilesList = value;
+                    RaisePropertyChanged(() => ProfilesList);
+                }
+            }
+        }
+
+        public CompositeCollection TrackedBotsList {
+            get { return _trackedBotsList; }
+            set {
+                if (_trackedBotsList != value) {
+                    _trackedBotsList = value;
+                    RaisePropertyChanged(() => TrackedBotsList);
+                }
+            }
+        }
+
+        public Profile SelectedProfile {
+            get { return _SelectedProfile; }
+            set {
+                if (_SelectedProfile != value) {
+                    _SelectedProfile = value;
+                    RaisePropertyChanged(() => SelectedProfile);
+                }
+            }
+        }
+
+        public IProfileRepository ProfileRepository {
+            get { return _profileRepository; }
+            set {
+                if (_profileRepository != value) {
+                    _profileRepository = value;
+                    RaisePropertyChanged(() => ProfileRepository);
+                }
+            }
+        }
+
+        public ObservableCollection<Profile> Profiles {
+            get { return _profiles; }
+            set {
+                if (_profiles != value) {
+                    _profiles = value;
+                    RaisePropertyChanged(() => Profiles);
+                }
+            }
+        }
+
+        public ObservableCollection<Bot> Bots {
+            get { return _bots; }
+            set {
+                if (_bots != value) {
+                    _bots = value;
+                    RaisePropertyChanged(() => Bots);
+                }
+            }
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Sets the selected profile as the active profile.
         /// </summary>
         /// <param name="selected">The selected profile.</param>
         private void SetActiveProfile(Profile selected) {
-            Debug.WriteLine($"Setting {selected.Id} as active profile.");
             if (selected == null) return;
+            _activeProfileChanged = true;
+            Debug.WriteLine($"Setting {selected.Id} as active profile.");
             Profiles.Where(p => p.IsActive).FirstOrDefault().IsActive = false;
             SelectedProfile.IsActive = true;
         }
@@ -88,15 +161,10 @@ namespace Client.ViewModels {
             }
         }
 
-        private void DiscardAndCloseEditor(Window window) {
-            if (window == null) return;
-            //Are you sure you want to discard all changes?
-            var msgBox = new Views.DeleteAllMsgBox();
-            msgBox.ShowDialog();
-            if (msgBox.Response) {
-                Debug.WriteLine("Yes im sure i wanna discard and close.");
-                window.Close();
-            }
+        private void ConfirmAndCloseEditor() {
+            Debug.WriteLine($"EDITORWINDOW sending an update for profile {SelectedProfile.Id}");
+            Messenger.Default.Send(SelectedProfile);
+            _profileRepository.SaveAll(Profiles);
         }
 
         private void AddNewBot() {
@@ -108,15 +176,15 @@ namespace Client.ViewModels {
 
             if (result == false) return;
 
-            //MessageBox.Show($"Found {openFileDlg.FileName}", "Found something!");
-
-
             // TODO check if bot is already being tracked! 
 
+            // TODO confirm changes
 
-            SelectedProfile.TrackedFiles.Add(Path.GetFileNameWithoutExtension(openFileDlg.FileName) + ".talos");
+            SelectedProfile.TrackedTalonFileNames.Add(Path.GetFileNameWithoutExtension(openFileDlg.FileName) + ".talos");
 
-            Debug.WriteLine($"{SelectedProfile.ProfileName} is now tracking {SelectedProfile.TrackedFiles.First()}");
+            _botRepository.Save(new Bot(openFileDlg.FileName));
+
+            Debug.WriteLine($"{SelectedProfile.ProfileName} is now tracking {SelectedProfile.TrackedTalonFileNames.Last()}");
 
             FillTrackedFilesList(SelectedProfile);
         }
@@ -157,9 +225,11 @@ namespace Client.ViewModels {
         }
 
         private void FillTrackedFilesList(Profile profile) {
-            TrackedFilesList = new CompositeCollection();
-            TrackedFilesList.Add(new CollectionContainer() { Collection = profile.TrackedFiles });
-            TrackedFilesList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
+            Bots = new ObservableCollection<Bot>(_botRepository.FindSelect(profile.TrackedTalonFileNames));
+            Debug.WriteLine($"#items in bots: {Bots.Count}");
+            TrackedBotsList = new CompositeCollection();
+            TrackedBotsList.Add(new CollectionContainer() { Collection = Bots });
+            TrackedBotsList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
         }
 
         private void AddNewProfile() {
@@ -175,56 +245,6 @@ namespace Client.ViewModels {
             return Profiles.Count <= 4;
         }
 
-        public CompositeCollection ProfilesList {
-            get { return _profilesList; }
-            set {
-                if (_profilesList != value) {
-                    _profilesList = value;
-                    RaisePropertyChanged(() => ProfilesList);
-                }
-            }
-        }
-
-        public CompositeCollection TrackedFilesList {
-            get { return _trackedFilesList; }
-            set {
-                if (_trackedFilesList != value) {
-                    _trackedFilesList = value;
-                    RaisePropertyChanged(() => TrackedFilesList);
-                }
-            }
-        }
-
-        public Profile SelectedProfile {
-            get { return _SelectedProfile; }
-            set {
-                if (_SelectedProfile != value) {
-                    _SelectedProfile = value;
-                    RaisePropertyChanged(() => SelectedProfile);
-                }
-            }
-        }
-
-        public IProfileRepository ProfileRepository {
-            get { return _profileRepository; }
-            set {
-                if (_profileRepository != value) {
-                    _profileRepository = value;
-                    RaisePropertyChanged(() => ProfileRepository);
-                }
-            }
-        }
-
-        public ObservableCollection<Profile> Profiles {
-            get { return _profiles; }
-            set {
-                if (_profiles != value) {
-                    _profiles = value;
-                    RaisePropertyChanged(() => Profiles);
-                }
-            }
-        }
-
         private void UntrackFile(string botToUntrack) {
             Debug.WriteLine("UNTRACKED BABYYYYY WUBBALUBBADUBDUB");
         }
@@ -234,5 +254,6 @@ namespace Client.ViewModels {
             FillTrackedFilesList(profile);
             SelectedProfile = profile;
         }
+        #endregion
     }
 }

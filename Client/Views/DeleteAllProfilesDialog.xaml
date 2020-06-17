@@ -10,9 +10,14 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Image Margin="15 0 0 0" Width="48" Source="../Icons/Help.png" />
-            <Label Content="{Binding Source={StaticResource LocStrings}, Path=DeleteAllDialogMessage}" VerticalAlignment="Center"
+            <Label VerticalAlignment="Center"
                    FontFamily="Trebuchet MS" FontSize="14"
-                   Margin="5 0 0 0"/>
+                   Margin="5 0 0 0">
+                <Label.Content>
+                    <TextBlock Text="{Binding Source={StaticResource LocStrings}, Path=DeleteAllDialogMessage}" 
+                               TextWrapping="Wrap" Width="200"/>
+                </Label.Content>
+            </Label>
         </StackPanel>
     </DockPanel>
 </Window>

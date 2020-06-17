@@ -9,30 +9,20 @@ namespace Client.Models {
     [Serializable]
     public class Profile : Notifier {
 
-        private Guid _id;
+        private Guid _id = Guid.NewGuid();
         private string _userName;
         private string _profileName;
-        private IList<string> _trackedFileNames;
-        private bool _isDefault;
-        private bool _isActive;
-        private readonly DateTime _createdTime;
+        private IList<string> _trackedTalonFileNames = new List<string>();
+        private bool _isDefault = false;
+        private bool _isActive = false;
+        private readonly DateTime _createdTime = DateTime.Now;
 
-        private bool _isInFocusProfileEditor;
-
-        // een slider op mainwindow voor de scale van de elementen in de scrollviewers
-        //misschien onder de tab View ?
-
-
-        public Profile(string userName,string profileName) {
-            _id = Guid.NewGuid();
+        public Profile(string userName, string profileName) {
             _userName = userName;
             _profileName = profileName;
-            _isDefault = false;
-            _trackedFileNames = new List<string>();
-            _isInFocusProfileEditor = false;
-            _createdTime = DateTime.Now;
-    }
+        }
 
+        #region Properties
         public bool IsActive {
             get { return _isActive; }
             set {
@@ -42,7 +32,6 @@ namespace Client.Models {
                 }
             }
         }
-
         public bool IsDefault {
             get { return _isDefault; }
             set {
@@ -52,7 +41,6 @@ namespace Client.Models {
                 }
             }
         }
-
         public Guid Id {
             get { return _id; }
             private set {
@@ -62,17 +50,15 @@ namespace Client.Models {
                 }
             }
         }
-
-        public IList<string> TrackedFiles {
-            get { return _trackedFileNames; }
+        public IList<string> TrackedTalonFileNames {
+            get { return _trackedTalonFileNames; }
             set {
-                if (_trackedFileNames != value) {
-                    _trackedFileNames = value;
-                    RaisePropertyChanged(() => TrackedFiles);
+                if (_trackedTalonFileNames != value) {
+                    _trackedTalonFileNames = value;
+                    RaisePropertyChanged(() => TrackedTalonFileNames);
                 }
             }
         }
-
         public string UserName {
             get { return _userName; }
             set {
@@ -82,7 +68,6 @@ namespace Client.Models {
                 }
             }
         }
-
         public string ProfileName {
             get { return _profileName; }
             set {
@@ -92,19 +77,9 @@ namespace Client.Models {
                 }
             }
         }
-
-        public bool IsInFocusProfileEditor {
-            get { return _isInFocusProfileEditor; }
-            set {
-                if (_isInFocusProfileEditor != value) {
-                    _isInFocusProfileEditor = value;
-                    RaisePropertyChanged(() => IsInFocusProfileEditor);
-                }
-            }
-        }
-
         public DateTime CreatedTime {
             get { return _createdTime; }
         }
+        #endregion
     }
 }
