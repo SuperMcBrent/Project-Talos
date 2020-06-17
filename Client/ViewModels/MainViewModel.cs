@@ -33,6 +33,7 @@ namespace Client.ViewModels {
         public RelayCommand OpenChangeProfileWindowCommand { get; private set; }
         public RelayCommand CollapseBotListCommand { get; private set; }
         public RelayCommand<Bot> SelectBotCommand { get; private set; }
+        public RelayCommand DefaultSizeCommand { get; private set; }
 
         private bool _botSelectorCollapsed = true;
         #endregion
@@ -47,6 +48,7 @@ namespace Client.ViewModels {
             OpenChangeProfileWindowCommand = new RelayCommand(OpenProfileOptions);
             CollapseBotListCommand = new RelayCommand(CollapseBotList);
             SelectBotCommand = new RelayCommand<Bot>(SelectBot);
+            DefaultSizeCommand = new RelayCommand(DefaultSize);
 
             Messenger.Default.Register<Profile>(this, UpdateSelectedProfile);
         }
@@ -133,6 +135,12 @@ namespace Client.ViewModels {
         #endregion
 
         #region Methods
+        private void DefaultSize() {
+            Debug.WriteLine("EH;KJTHWHTHwjthjkwhgtWJTHwerHWERewjrhWENJKHNGJLJBJ");
+            Application.Current.MainWindow.Height = 800;
+            Application.Current.MainWindow.Width = 713;
+        }
+
         private void SelectBot(Bot selectedBot) {
             if (selectedBot == null) return;
             foreach (Bot bot in Bots.Where(b => b.IsSelected)) {

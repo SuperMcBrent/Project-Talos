@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Discarding all changes." Height="150" Width="300"
-        Background="DarkSlateGray">
+        Background="DarkSlateGray" WindowStartupLocation="CenterScreen">
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 5 5">
             <Button MinWidth="75" Content="{Binding Source={StaticResource LocStrings}, Path=No}" Click="OnNo_Clicked" />

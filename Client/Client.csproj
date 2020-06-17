@@ -200,5 +200,9 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Gamemodes\PlanetWars.png" />
+    <Resource Include="Icons\Gamemodes\TicTacToe.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

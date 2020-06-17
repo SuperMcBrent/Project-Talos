@@ -58,9 +58,9 @@ namespace Client.Models {
             _name = Path.GetFileNameWithoutExtension(new FileInfo(path).FullName);
             _version = "V 1.3.3.7";
 
-            Games.Add(new Game());
-            Games.Add(new Game());
-            Games.Add(new Game());
+            for (int i = 0; i < 50; i++) {
+                Games.Add(new Game());
+            }
 
             //voor de mogelijke messages een model maken
             //Inheritance / Interfaces?

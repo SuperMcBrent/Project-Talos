@@ -12,6 +12,7 @@
         Title="Profile Editor"
         Icon="../Icons/Main.png"
         Name="ProfileEditorWindow"
+        WindowStartupLocation="CenterScreen"
         DataContext="{Binding ProfileEditor, Source={StaticResource Locator}}"
         d:DataContext="{d:DesignData /SampleData/ProfileEditorViewSampleData.xaml}" Closing="ProfileEditorWindow_Closing">
     <Window.Background>

@@ -32,5 +32,10 @@ namespace Client.Views {
             var menuItem = e.Source as Border;
             if (menuItem != null) ViewModel.SelectBotCommand.Execute(menuItem.DataContext as Bot);
         }
+
+        private void DefaultSize_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as TextBlock;
+            if (menuItem != null) ViewModel.DefaultSizeCommand.Execute(null);
+        }
     }
 }
