@@ -44,12 +44,13 @@ namespace Client.Models {
     public class Bot : Notifier {
 
         #region Fields
-        private Guid _id;
+        private Guid _id = new Guid();
         private readonly DateTime _addedTime = DateTime.Now;
         private string _botFilePath;
         private string _name;
         private string _version;
-        private IDictionary _games = new Dictionary<Guid, Game>();
+        private bool _isSelected = false;
+        private IList _games = new List<Game>();
         #endregion
 
         public Bot(string path) {
@@ -57,7 +58,9 @@ namespace Client.Models {
             _name = Path.GetFileNameWithoutExtension(new FileInfo(path).FullName);
             _version = "V 1.3.3.7";
 
-
+            Games.Add(new Game());
+            Games.Add(new Game());
+            Games.Add(new Game());
 
             //voor de mogelijke messages een model maken
             //Inheritance / Interfaces?
@@ -65,6 +68,15 @@ namespace Client.Models {
         }
 
         #region Properties
+        public bool IsSelected {
+            get { return _isSelected; }
+            set {
+                if (_isSelected != value) {
+                    _isSelected = value;
+                    RaisePropertyChanged(() => IsSelected);
+                }
+            }
+        }
         public DateTime AddedTime {
             get { return _addedTime; }
         }
@@ -78,7 +90,7 @@ namespace Client.Models {
             }
         }
         public int ActiveGameCount {
-            get { return ((Dictionary<Guid,Game>)Games).Values.Where(g => g.GameOnGoing).Count(); }
+            get { return ((List<Game>)Games).Where(g => g.GameOnGoing).Count(); }
         }
         public string BotFilePath {
             get { return _botFilePath; }
@@ -107,7 +119,7 @@ namespace Client.Models {
                 }
             }
         }
-        public IDictionary Games {
+        public IList Games {
             get { return _games; }
             set {
                 if (_games != value) {

@@ -28,11 +28,6 @@ namespace Client.Views {
             if (menuItem != null) ViewModel.CollapseBotListCommand.Execute(null);
         }
 
-        private void CollapseGameList_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            var menuItem = e.Source as Border;
-            if (menuItem != null) ViewModel.CollapseGameListCommand.Execute(null);
-        }
-
         private void SelectBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             var menuItem = e.Source as Border;
             if (menuItem != null) ViewModel.SelectBotCommand.Execute(menuItem.DataContext as Bot);

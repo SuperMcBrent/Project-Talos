@@ -1,13 +1,41 @@
 ﻿<Client_ViewModels:MainViewModel
     xmlns:Client_ViewModels="clr-namespace:Client.ViewModels" 
-    xmlns:Client_Models="clr-namespace:Client.Models"
+    xmlns:Client_Models="clr-namespace:Client.Models" 
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
     IsInDesignMode="True">
 
+    <Client_ViewModels:MainViewModel BotSelectorCollapsed="True"/>
+
     <Client_ViewModels:MainViewModel.Bots>
-        <Client_Models:Bot Name="BotNaam1" Version="V 1.1.1.0"/>
-        <Client_Models:Bot Name="BotNaam2" Version="V 1.1.2.0"/>
-        <Client_Models:Bot Name="BotNaam3" Version="V 1.1.3.0"/>
-        <Client_Models:Bot Name="BotNaam4" Version="V 1.1.4.0"/>
+        <Client_Models:Bot Name="BotNaam1" Version="V 1.1.1.0" IsSelected="True">
+            <Client_Models:Bot.Games>
+                <Client_Models:Game>
+                    <Client_Models:Game.Id>
+                        <System:Guid/>
+                    </Client_Models:Game.Id>
+                </Client_Models:Game>
+            </Client_Models:Bot.Games>
+        </Client_Models:Bot>
+        
+        <Client_Models:Bot Name="BotNaam2" Version="V 1.1.1.0" IsSelected="False">
+            <Client_Models:Bot.Games>
+                <Client_Models:Game>
+                    <Client_Models:Game.Id>
+                        <System:Guid/>
+                    </Client_Models:Game.Id>
+                </Client_Models:Game>
+            </Client_Models:Bot.Games>
+        </Client_Models:Bot>
+
+        <Client_Models:Bot Name="BotNaam3" Version="V 1.1.1.0" IsSelected="False">
+            <Client_Models:Bot.Games>
+                <Client_Models:Game>
+                    <Client_Models:Game.Id>
+                        <System:Guid/>
+                    </Client_Models:Game.Id>
+                </Client_Models:Game>
+            </Client_Models:Bot.Games>
+        </Client_Models:Bot>
     </Client_ViewModels:MainViewModel.Bots>
 
 </Client_ViewModels:MainViewModel>

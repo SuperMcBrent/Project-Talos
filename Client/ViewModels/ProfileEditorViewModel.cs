@@ -50,11 +50,7 @@ namespace Client.ViewModels {
             _profileRepository = profileRepository;
             _botRepository = botRepository;
 
-            Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
-            SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
-
-            FillProfilesList();
-            FillTrackedFilesList(SelectedProfile);
+            UpdateSelectedProfile(null);
 
             UntrackFileCommand = new RelayCommand<string>(UntrackFile);
             SelectProfileCommand = new RelayCommand<Profile>(SelectProfile);
@@ -132,6 +128,27 @@ namespace Client.ViewModels {
         #endregion
 
         #region Methods
+        private void UpdateSelectedProfile(Profile newProfile) {
+            Debug.WriteLine($"Setting selected profile.");
+            if (newProfile == null) {
+                Debug.WriteLine($"Selected profile was null, getting from repo.");
+                Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
+                SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
+            } else {
+                SelectedProfile = newProfile;
+            }
+
+            ProfilesList = new CompositeCollection();
+            ProfilesList.Add(new CollectionContainer() { Collection = Profiles });
+            if (!CanAddNewProfile()) return;
+            ProfilesList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
+
+            Bots = new ObservableCollection<Bot>(_botRepository.FindSelect(SelectedProfile.TrackedTalonFileNames));
+            Debug.WriteLine($"#items in bots: {Bots.Count}");
+            TrackedBotsList = new CompositeCollection();
+            TrackedBotsList.Add(new CollectionContainer() { Collection = Bots });
+            TrackedBotsList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
+        }
         /// <summary>
         /// Sets the selected profile as the active profile.
         /// </summary>
@@ -154,10 +171,7 @@ namespace Client.ViewModels {
             if (msgBox.Response) {
                 Debug.WriteLine("Yes im sure.");
                 _profileRepository.RepositoryHardReset();
-                Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
-                SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
-                FillProfilesList();
-                FillTrackedFilesList(SelectedProfile);
+                UpdateSelectedProfile(null);
             }
         }
 
@@ -186,7 +200,7 @@ namespace Client.ViewModels {
 
             Debug.WriteLine($"{SelectedProfile.ProfileName} is now tracking {SelectedProfile.TrackedTalonFileNames.Last()}");
 
-            FillTrackedFilesList(SelectedProfile);
+            UpdateSelectedProfile(SelectedProfile);
         }
 
         /// <summary>
@@ -203,7 +217,7 @@ namespace Client.ViewModels {
                 SelectedProfile = Profiles.Where(p => p.IsDefault).FirstOrDefault();
             }
 
-            FillProfilesList();
+            UpdateSelectedProfile(SelectedProfile);
         }
 
         /// <summary>
@@ -217,28 +231,11 @@ namespace Client.ViewModels {
             return !profile.IsDefault && !profile.IsActive;
         }
 
-        private void FillProfilesList() {
-            ProfilesList = new CompositeCollection();
-            ProfilesList.Add(new CollectionContainer() { Collection = Profiles });
-            if (!CanAddNewProfile()) return;
-            ProfilesList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
-        }
-
-        private void FillTrackedFilesList(Profile profile) {
-            Bots = new ObservableCollection<Bot>(_botRepository.FindSelect(profile.TrackedTalonFileNames));
-            Debug.WriteLine($"#items in bots: {Bots.Count}");
-            TrackedBotsList = new CompositeCollection();
-            TrackedBotsList.Add(new CollectionContainer() { Collection = Bots });
-            TrackedBotsList.Add(new CollectionContainer() { Collection = new ObservableCollection<CustomListAddButton>() { new CustomListAddButton() } });
-        }
-
         private void AddNewProfile() {
             Debug.WriteLine("Adding new profile.");
             var newProfile = new Profile("DefaultUserName", "New Profile");
-
             Profiles.Add(newProfile);
-
-            FillProfilesList();
+            UpdateSelectedProfile(newProfile);
         }
 
         private bool CanAddNewProfile() {
@@ -251,8 +248,7 @@ namespace Client.ViewModels {
 
         private void SelectProfile(Profile profile) {
             Debug.WriteLine("Selecting Profile");
-            FillTrackedFilesList(profile);
-            SelectedProfile = profile;
+            UpdateSelectedProfile(profile);
         }
         #endregion
     }

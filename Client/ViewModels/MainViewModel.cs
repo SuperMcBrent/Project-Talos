@@ -32,11 +32,9 @@ namespace Client.ViewModels {
 
         public RelayCommand OpenChangeProfileWindowCommand { get; private set; }
         public RelayCommand CollapseBotListCommand { get; private set; }
-        public RelayCommand CollapseGameListCommand { get; private set; }
         public RelayCommand<Bot> SelectBotCommand { get; private set; }
 
-        private bool _botSelectorCollapsed = false;
-        private bool _gameSelectorCollapsed = true;
+        private bool _botSelectorCollapsed = true;
         #endregion
 
         #region Constructor
@@ -48,7 +46,6 @@ namespace Client.ViewModels {
 
             OpenChangeProfileWindowCommand = new RelayCommand(OpenProfileOptions);
             CollapseBotListCommand = new RelayCommand(CollapseBotList);
-            CollapseGameListCommand = new RelayCommand(CollapseGameList);
             SelectBotCommand = new RelayCommand<Bot>(SelectBot);
 
             Messenger.Default.Register<Profile>(this, UpdateSelectedProfile);
@@ -62,15 +59,6 @@ namespace Client.ViewModels {
                 if (_selectedBot != value) {
                     _selectedBot = value;
                     RaisePropertyChanged(() => SelectedBot);
-                }
-            }
-        }
-        public bool GameSelectorCollapsed {
-            get { return _gameSelectorCollapsed; }
-            set {
-                if (_gameSelectorCollapsed != value) {
-                    _gameSelectorCollapsed = value;
-                    RaisePropertyChanged(() => GameSelectorCollapsed);
                 }
             }
         }
@@ -146,7 +134,12 @@ namespace Client.ViewModels {
 
         #region Methods
         private void SelectBot(Bot selectedBot) {
+            if (selectedBot == null) return;
+            foreach (Bot bot in Bots.Where(b => b.IsSelected)) {
+                bot.IsSelected = false;
+            }
             SelectedBot = selectedBot;
+            SelectedBot.IsSelected = true;
         }
 
         private void UpdateSelectedProfile(Profile newProfile) {
@@ -155,12 +148,12 @@ namespace Client.ViewModels {
                 Debug.WriteLine($"Selected profile was null, getting from repo.");
                 Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
                 SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
+            } else {
+                SelectedProfile = newProfile;
             }
             
             Bots = new ObservableCollection<Bot>(_botRepository.FindSelect(SelectedProfile.TrackedTalonFileNames));
-            SelectedBot = Bots.FirstOrDefault();
-
-            SelectedProfile = newProfile;
+            SelectBot(Bots.FirstOrDefault());
         }
 
         /// <summary>
@@ -176,26 +169,6 @@ namespace Client.ViewModels {
         /// </summary>
         private void CollapseBotList() {
             BotSelectorCollapsed = !BotSelectorCollapsed;
-        }
-
-        /// <summary>
-        /// Collapses or Uncollapses the game list.
-        /// </summary>
-        private void CollapseGameList() {
-            GameSelectorCollapsed = !GameSelectorCollapsed;
-        }
-
-        /// <summary>
-        /// Adds a default profile to the profilerepository.
-        /// </summary>
-        private void AddDefaultProfile() {
-            var profile = new Profile("DefaultUserName", "DefaultProfile") {
-                IsDefault = true,
-                IsActive = true
-            };
-            Profiles.Add(profile);
-            SelectedProfile = profile;
-            _profileRepository.SaveAll(Profiles);
         }
         #endregion
 

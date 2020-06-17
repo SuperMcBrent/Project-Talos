@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Client.Models {
     [Serializable]
-    public abstract class Game : Notifier {
+    public class Game : Notifier {
 
         #region Fields
         private Guid _id = Guid.NewGuid();
