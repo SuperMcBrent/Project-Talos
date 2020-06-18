@@ -85,6 +85,8 @@
     </Compile>
     <Compile Include="Models\CustomListAddButton.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameModeType.cs" />
+    <Compile Include="Models\LanguageType.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -93,6 +95,7 @@
     <Compile Include="Utilities\ColorExtensionMethod.cs" />
     <Compile Include="Utilities\BoolToValueConverter.cs" />
     <Compile Include="Utilities\DirectoryTools.cs" />
+    <Compile Include="Utilities\GameModeTypeTemplateSelector.cs" />
     <Compile Include="Utilities\LogFile.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ProfileEditorViewModel.cs" />

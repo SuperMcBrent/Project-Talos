@@ -51,10 +51,16 @@ namespace Client.Models {
         private string _version;
         private bool _isSelected = false;
         private IList _games = new List<Game>();
+
+        private readonly GameModeType _gameMode;
+        private readonly LanguageType _language;
         #endregion
 
-        public Bot(string path) {
+        public Bot(string path, GameModeType gameMode, LanguageType language) {
             _botFilePath = path;
+            _gameMode = gameMode;
+            _language = language;
+
             _name = Path.GetFileNameWithoutExtension(new FileInfo(path).FullName);
             _version = "V 1.3.3.7";
 
@@ -88,6 +94,12 @@ namespace Client.Models {
                     RaisePropertyChanged(() => Id);
                 }
             }
+        }
+        public GameModeType GameMode {
+            get { return _gameMode; }
+        }
+        public LanguageType Language {
+            get { return _language; }
         }
         public int ActiveGameCount {
             get { return ((List<Game>)Games).Where(g => g.GameOnGoing).Count(); }

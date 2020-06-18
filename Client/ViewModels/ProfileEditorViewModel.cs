@@ -196,7 +196,7 @@ namespace Client.ViewModels {
 
             SelectedProfile.TrackedTalonFileNames.Add(Path.GetFileNameWithoutExtension(openFileDlg.FileName) + ".talos");
 
-            _botRepository.Save(new Bot(openFileDlg.FileName));
+            _botRepository.Save(new Bot(openFileDlg.FileName,GameModeType.TicTacToe,LanguageType.CSharp));
 
             Debug.WriteLine($"{SelectedProfile.ProfileName} is now tracking {SelectedProfile.TrackedTalonFileNames.Last()}");
 
