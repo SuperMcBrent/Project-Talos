@@ -1,0 +1,62 @@
+﻿<Window x:Class="Client.Views.AddNewBotView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:m="clr-namespace:Client.Models"
+        Title="Add New Bot" Height="180" Width="350"
+        DataContext="{Binding AddProfile, Source={StaticResource Locator}}"
+        Background="DarkSlateGray" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="GameModeTypes" MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="m:GameModeType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="LanguageTypes" MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="m:LanguageType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 5 5">
+            <Button MinWidth="75" Content="Close" Click="OnClose_Click" />
+            <Button Margin="5 0 0 0" MinWidth="75" Content="Add Bot" Click="AddButton_Click" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Image Margin="15 0 0 0" Width="48" Source="../Icons/New.png" />
+            <Grid Margin="10 25" Width="260">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    Text="{Binding Path}"
+                    Grid.Column="0" Grid.ColumnSpan="4"
+                    Margin="5" TextWrapping="Wrap" />
+                <Button
+                    Grid.Column="4" Click="BrowseButton_Click"
+                    Content="Choose File" Margin="5" Grid.ColumnSpan="2" />
+                <ComboBox
+                    Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                    Margin="5" SelectedIndex="0" SelectedItem="{Binding GameMode}"
+                    ItemsSource="{Binding Source={StaticResource GameModeTypes}}" />
+                <ComboBox
+                    Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="3"
+                    Margin="5" SelectedIndex="0" SelectedItem="{Binding Language}"
+                    ItemsSource="{Binding Source={StaticResource LanguageTypes}}" />
+            </Grid>
+        </StackPanel>
+    </DockPanel>
+</Window>

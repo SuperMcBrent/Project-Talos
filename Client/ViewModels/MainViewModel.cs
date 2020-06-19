@@ -3,6 +3,7 @@ using Client.Framework;
 using Client.Models;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using LiveCharts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,38 +24,62 @@ namespace Client.ViewModels {
         private ObservableCollection<Bot> _bots;
         private Bot _selectedBot;
 
-        private readonly IProfileRepository _profileRepository;
-        private ObservableCollection<Profile> _profiles;
-        private Profile _selectedProfile;
-
         private ObservableCollection<Game> _gamesThisSession;
         private CompositeCollection _compositeGamesThisSessionList;
+
+        private IList<Connection> _connections;
+        private Connection _selectedConnection;
+        private string _socket = "ws://api.wartemis.com/socket";
 
         public RelayCommand OpenChangeProfileWindowCommand { get; private set; }
         public RelayCommand CollapseBotListCommand { get; private set; }
         public RelayCommand<Bot> SelectBotCommand { get; private set; }
         public RelayCommand DefaultSizeCommand { get; private set; }
+        public RelayCommand AddBotCommand { get; private set; }
+        public RelayCommand<Bot> ConnectCommand { get; private set; }
+        public RelayCommand<Bot> RegisterCommand { get; private set; }
+        public RelayCommand<Bot> DisconnectCommand { get; private set; }
 
-        private bool _botSelectorCollapsed = true;
+        private bool _botSelectorCollapsed = false;
         #endregion
 
         #region Constructor
-        public MainViewModel(IProfileRepository profileRepository, IBotRepository botRepository) {
-            _profileRepository = profileRepository;
+        public MainViewModel(IBotRepository botRepository) {
             _botRepository = botRepository;
 
-            UpdateSelectedProfile(null);
+            Bots = new ObservableCollection<Bot>(_botRepository.FindAll());
 
-            OpenChangeProfileWindowCommand = new RelayCommand(OpenProfileOptions);
+            if (_connections == null) _connections = new List<Connection>();
+            foreach (var item in Bots) {
+                if (_connections.Any(c => c.Bot.Id == item.Id)) continue;
+                _connections.Add(new Connection(_socket, item));
+            }
+
+            SelectBot(Bots.FirstOrDefault());
+
             CollapseBotListCommand = new RelayCommand(CollapseBotList);
             SelectBotCommand = new RelayCommand<Bot>(SelectBot);
             DefaultSizeCommand = new RelayCommand(DefaultSize);
+            AddBotCommand = new RelayCommand(OpenAddBotDialog);
 
-            Messenger.Default.Register<Profile>(this, UpdateSelectedProfile);
+            ConnectCommand = new RelayCommand<Bot>(ConnectBot);
+            RegisterCommand = new RelayCommand<Bot>(RegisterBot);
+            DisconnectCommand = new RelayCommand<Bot>(DisconnectBot);
+
+            Messenger.Default.Register<Bot>(this, AddNewBot);
         }
         #endregion
 
         #region Properties
+        public Connection SelectedConnection {
+            get { return _selectedConnection; }
+            set {
+                if (_selectedConnection != value) {
+                    _selectedConnection = value;
+                    RaisePropertyChanged(() => SelectedConnection);
+                }
+            }
+        }
         public Bot SelectedBot {
             get { return _selectedBot; }
             set {
@@ -91,25 +116,6 @@ namespace Client.ViewModels {
                 }
             }
         }
-        public Profile SelectedProfile {
-            get { return _selectedProfile; }
-            set {
-                if (_selectedProfile != value) {
-                    _selectedProfile = value;
-                    RaisePropertyChanged(() => SelectedProfile);
-                    _profileRepository.SaveAll(Profiles);
-                }
-            }
-        }
-        public ObservableCollection<Profile> Profiles {
-            get { return _profiles; }
-            set {
-                if (_profiles != value) {
-                    _profiles = value;
-                    RaisePropertyChanged(() => Profiles);
-                }
-            }
-        }
         public CompositeCollection CompositeGamesThisSessionList {
             get { return _compositeGamesThisSessionList; }
             set {
@@ -135,6 +141,39 @@ namespace Client.ViewModels {
         #endregion
 
         #region Methods
+        private void DisconnectBot(Bot bot) {
+            Debug.WriteLine($"I want to disconnect {bot.Id}");
+            if (bot == null) return;
+            var botConn = _connections.Where(c => c.Bot.Id.Equals(bot.Id)).FirstOrDefault();
+            botConn.StopConnection();
+        }
+        private void RegisterBot(Bot bot) {
+            Debug.WriteLine($"I want to register {bot.Id}");
+            if (bot == null) return;
+            var botConn = _connections.Where(c => c.Bot.Id.Equals(bot.Id)).FirstOrDefault();
+            botConn.RegisterConnection();
+        }
+        private void ConnectBot(Bot bot) {
+            Debug.WriteLine($"I want to connect {bot.Id}");
+            if (bot == null) return;
+            var botConn = _connections.Where(c => c.Bot.Id.Equals(bot.Id)).FirstOrDefault();
+            SelectedConnection = botConn;
+            botConn.StartConnection();
+        }
+        private void AddNewBot(Bot newBot) {
+            if (newBot == null) return;
+            Bots.Add(newBot);
+            _botRepository.Save(newBot);
+            if (!_connections.Any(c => c.Bot.Id == newBot.Id)) _connections.Add(new Connection(_socket, newBot));
+            SelectBot(newBot);
+        }
+        /// <summary>
+        /// Opens the aad bot window.
+        /// </summary>
+        private void OpenAddBotDialog() {
+            var addBot = new Views.AddNewBotView();
+            addBot.ShowDialog();
+        }
         private void DefaultSize() {
             Debug.WriteLine("EH;KJTHWHTHwjthjkwhgtWJTHwerHWERewjrhWENJKHNGJLJBJ");
             Application.Current.MainWindow.Height = 800;
@@ -148,28 +187,7 @@ namespace Client.ViewModels {
             }
             SelectedBot = selectedBot;
             SelectedBot.IsSelected = true;
-        }
-
-        private void UpdateSelectedProfile(Profile newProfile) {
-            Debug.WriteLine($"Setting selected profile.");
-            if (newProfile == null) {
-                Debug.WriteLine($"Selected profile was null, getting from repo.");
-                Profiles = new ObservableCollection<Profile>(_profileRepository.FindAll());
-                SelectedProfile = Profiles.Where(p => p.IsActive).FirstOrDefault();
-            } else {
-                SelectedProfile = newProfile;
-            }
-            
-            Bots = new ObservableCollection<Bot>(_botRepository.FindSelect(SelectedProfile.TrackedTalonFileNames));
-            SelectBot(Bots.FirstOrDefault());
-        }
-
-        /// <summary>
-        /// Opens the category options window.
-        /// </summary>
-        private void OpenProfileOptions() {
-            var profileOptions = new Views.ProfileEditorView();
-            profileOptions.ShowDialog();
+            SelectedConnection = _connections.Where(c => c.Bot.Id.Equals(selectedBot.Id)).FirstOrDefault();
         }
 
         //// <summary>

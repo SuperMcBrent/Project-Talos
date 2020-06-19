@@ -68,8 +68,8 @@ namespace Client.Framework {
             get { return _bootStrapper.Container.Resolve<MainViewModel>(); }
         }
 
-        public ProfileEditorViewModel ProfileEditor {
-            get { return _bootStrapper.Container.Resolve<ProfileEditorViewModel>(); }
+        public AddNewBotViewModel AddProfile {
+            get { return _bootStrapper.Container.Resolve<AddNewBotViewModel>(); }
         }
     }
 }

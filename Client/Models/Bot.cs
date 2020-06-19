@@ -3,10 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Xaml;
+using WatsonWebsocket;
 
 namespace Client.Models {
 
@@ -44,13 +48,15 @@ namespace Client.Models {
     public class Bot : Notifier {
 
         #region Fields
-        private Guid _id = new Guid();
+        private Guid _id = Guid.NewGuid();
         private readonly DateTime _addedTime = DateTime.Now;
         private string _botFilePath;
         private string _name;
         private string _version;
         private bool _isSelected = false;
         private IList _games = new List<Game>();
+
+        private Logger _logger = new Logger();
 
         private readonly GameModeType _gameMode;
         private readonly LanguageType _language;
@@ -74,6 +80,15 @@ namespace Client.Models {
         }
 
         #region Properties
+        public Logger Logger {
+            get { return _logger; }
+            set {
+                if (_logger != value) {
+                    _logger = value;
+                    RaisePropertyChanged(() => Logger);
+                }
+            }
+        }
         public bool IsSelected {
             get { return _isSelected; }
             set {

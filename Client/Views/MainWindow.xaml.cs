@@ -1,7 +1,11 @@
 ﻿using Client.Models;
 using Client.ViewModels;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Client.Views {
 
@@ -36,6 +40,26 @@ namespace Client.Views {
         private void DefaultSize_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             var menuItem = e.Source as TextBlock;
             if (menuItem != null) ViewModel.DefaultSizeCommand.Execute(null);
+        }
+
+        private void AddBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.AddBotCommand.Execute(null);
+        }
+
+        private void ConnectBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.ConnectCommand.Execute(menuItem.DataContext as Bot);
+        }
+
+        private void DisconnectBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.DisconnectCommand.Execute(menuItem.DataContext as Bot);
+        }
+
+        private void RegisterBot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            var menuItem = e.Source as Border;
+            if (menuItem != null) ViewModel.RegisterCommand.Execute(menuItem.DataContext as Bot);
         }
     }
 }

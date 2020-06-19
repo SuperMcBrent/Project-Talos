@@ -47,6 +47,15 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -70,6 +79,9 @@
     <Reference Include="Unity.Container, Version=5.11.8.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.11.7\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
+    <Reference Include="WatsonWebsocket, Version=2.1.7.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WatsonWebsocket.2.1.7.2\lib\net452\WatsonWebsocket.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -83,10 +95,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\ILog.cs" />
+    <Compile Include="Interfaces\IMessageParameter.cs" />
+    <Compile Include="Models\Connection.cs" />
     <Compile Include="Models\CustomListAddButton.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GameModeType.cs" />
+    <Compile Include="Models\IntParameter.cs" />
     <Compile Include="Models\LanguageType.cs" />
+    <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\Logger.cs" />
+    <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\MessageBuilder.cs" />
+    <Compile Include="Models\PlanetWarsGame.cs" />
+    <Compile Include="Models\StringParameter.cs" />
+    <Compile Include="Models\TicTacToeGame.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -97,32 +120,27 @@
     <Compile Include="Utilities\DirectoryTools.cs" />
     <Compile Include="Utilities\GameModeTypeTemplateSelector.cs" />
     <Compile Include="Utilities\LogFile.cs" />
+    <Compile Include="Utilities\SeriesCollectionHelper.cs" />
+    <Compile Include="ViewModels\AddNewBotViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\ProfileEditorViewModel.cs" />
+    <Compile Include="Views\AddNewBotView.xaml.cs">
+      <DependentUpon>AddNewBotView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DeleteAllMsgBox.xaml.cs">
       <DependentUpon>DeleteAllProfilesDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiscardAllProfileChangesDialog.xaml.cs">
-      <DependentUpon>DiscardAllProfileChangesDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ProfileEditorView.xaml.cs">
-      <DependentUpon>ProfileEditorView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\BotRepository.cs" />
     <Compile Include="Business\IBotRepository.cs" />
-    <Compile Include="Business\IProfileRepository.cs" />
-    <Compile Include="Business\ProfileRepository.cs" />
     <Compile Include="Framework\Bootstrapper.cs" />
     <Compile Include="Framework\ClientViewModelBase.cs" />
     <Compile Include="Framework\Notifier.cs" />
     <Compile Include="Framework\ViewModelLocator.cs" />
     <Compile Include="Models\Bot.cs" />
-    <Compile Include="Models\Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -176,18 +194,15 @@
     <DesignData Include="SampleData\MainViewModelSampleData.xaml">
       <SubType>Designer</SubType>
     </DesignData>
-    <DesignData Include="SampleData\ProfileEditorViewSampleData.xaml">
-      <SubType>Designer</SubType>
-    </DesignData>
     <Page Include="Styles\Others.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\DeleteAllProfilesDialog.xaml">
+    <Page Include="Views\AddNewBotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiscardAllProfileChangesDialog.xaml">
+    <Page Include="Views\DeleteAllProfilesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -195,14 +210,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProfileEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Icons\Gamemodes\PlanetWars.png" />
     <Resource Include="Icons\Gamemodes\TicTacToe.png" />

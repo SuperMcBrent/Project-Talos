@@ -20,10 +20,9 @@ namespace Client.Framework {
         /// We register here every service / interface / viewmodel.
         /// </summary>
         private void ConfigureContainer() {
-            Container.RegisterInstance<IProfileRepository>(new ProfileRepository("Profiles"));
-            Container.RegisterInstance<IBotRepository>(new BotRepository("Bots")); // folder met files
+            Container.RegisterInstance<IBotRepository>(new BotRepository("Bots")); // file met bots
             Container.RegisterType<MainViewModel>();
-            Container.RegisterType<ProfileEditorViewModel>();
+            Container.RegisterType<AddNewBotViewModel>();
         }
     }
 }

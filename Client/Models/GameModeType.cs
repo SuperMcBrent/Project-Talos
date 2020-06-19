@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Client.Models {
     public enum GameModeType {
+        None,
         PlanetWars,
-        TicTacToe
+        TicTacToe,
+        Conquest
     }
 }

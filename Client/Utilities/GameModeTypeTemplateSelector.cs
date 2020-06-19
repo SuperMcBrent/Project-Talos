@@ -12,16 +12,16 @@ namespace Client.Utilities {
     public class GameModeTypeTemplateSelector : DataTemplateSelector {
         public DataTemplate PlanetWarsImageTemplate { get; set; }
         public DataTemplate TicTacToeImageTemplate { get; set; }
+        public DataTemplate ConquestImageTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container) {
-            Debug.WriteLine("here");
             switch ((GameModeType)item) {
                 case GameModeType.PlanetWars:
-                    Debug.WriteLine("planetwarsss");
                     return PlanetWarsImageTemplate;
                 case GameModeType.TicTacToe:
-                    Debug.WriteLine("tikkitokkitooeee");
                     return TicTacToeImageTemplate;
+                case GameModeType.Conquest:
+                    return ConquestImageTemplate;
             }
 
             return base.SelectTemplate(item, container);

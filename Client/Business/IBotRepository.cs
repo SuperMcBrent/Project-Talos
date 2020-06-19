@@ -27,11 +27,5 @@ namespace Client.Business {
         /// </summary>
         /// <returns>A List with all Bots</returns>
         IList<Bot> FindAll();
-
-        /// <summary>
-        /// Returns the specific bots from te repository.
-        /// </summary>
-        /// <returns>A List with specific Bots</returns>
-        IList<Bot> FindSelect(IList<string> pathList);
     }
 }

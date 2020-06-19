@@ -7,17 +7,7 @@
     <Client_ViewModels:MainViewModel BotSelectorCollapsed="True"/>
 
     <Client_ViewModels:MainViewModel.Bots>
-        <Client_Models:Bot Name="BotNaam1" Version="V 1.1.1.0" IsSelected="True">
-            <Client_Models:Bot.Games>
-                <Client_Models:Game>
-                    <Client_Models:Game.Id>
-                        <System:Guid/>
-                    </Client_Models:Game.Id>
-                </Client_Models:Game>
-            </Client_Models:Bot.Games>
-        </Client_Models:Bot>
-        
-        <Client_Models:Bot Name="BotNaam2" Version="V 1.1.1.0" IsSelected="False">
+        <Client_Models:Bot Name="BotNaam1" Version="V 1.1.1.0" IsSelected="True" GameMode="TicTacToe">
             <Client_Models:Bot.Games>
                 <Client_Models:Game>
                     <Client_Models:Game.Id>
@@ -27,7 +17,17 @@
             </Client_Models:Bot.Games>
         </Client_Models:Bot>
 
-        <Client_Models:Bot Name="BotNaam3" Version="V 1.1.1.0" IsSelected="False">
+        <Client_Models:Bot Name="BotNaam2" Version="V 1.1.1.0" IsSelected="False" GameMode="PlanetWars">
+            <Client_Models:Bot.Games>
+                <Client_Models:Game>
+                    <Client_Models:Game.Id>
+                        <System:Guid/>
+                    </Client_Models:Game.Id>
+                </Client_Models:Game>
+            </Client_Models:Bot.Games>
+        </Client_Models:Bot>
+
+        <Client_Models:Bot Name="BotNaam3" Version="V 1.1.1.0" IsSelected="False" GameMode="Conquest">
             <Client_Models:Bot.Games>
                 <Client_Models:Game>
                     <Client_Models:Game.Id>
